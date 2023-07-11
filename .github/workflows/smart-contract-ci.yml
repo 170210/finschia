@@ -62,7 +62,7 @@ jobs:
           make localnet-start
       - name: Test smart contract
         run: |
-          STORE_RES=$(fnsad tx wasm store artifacts/queue-aarch64.wasm --from alice --keyring-backend test --chain-id finschia --gas 1500000 -b block -o json -y)
+          STORE_RES=$(fnsad tx wasm store contracts/queue.wasm --from alice --keyring-backend test --chain-id finschia --gas 1500000 -b block -o json -y)
           sleep 10
           echo $STORE_RES
       - name: Stop localnet
