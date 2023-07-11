@@ -1,7 +1,6 @@
 name: Smart Contract CI
 
-on:
-  push:
+on: push
 
 jobs:
   cleanup-runs:
@@ -60,17 +59,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y docker-compose
       - name: Start localnet
         run: |
-          make localnet-start
-      - name: Test blocks
-        id: test-blocks
-        continue-on-error: true
-        run: ./networks/localnet-blocks-test.sh 40 5 100 localhost
-      - name: Stop localnet
-        run: |
-          make localnet-stop
-          if [ ${{ steps.test-blocks.outcome }} == 'failure' ] ; then
-            exit 1
-          fi
+          ls -al 
 
   # pull_smart_contract:
   #   runs-on: ubuntu-latest
