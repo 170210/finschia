@@ -28,19 +28,23 @@ done
 
 # the result should be 3
 count_msg=`jq -nc '{count:{}}'`
-RUN_INFO=fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg
+RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg)
 executeCheck $RUN_INFO "query_error"
-cat $RUN_INFO | jq '.data'
+result=$(echo $test | grep 'count:' | awk -F ' ' '{print $2}')
+if [[ $result != "3" ]]; then
+    echo "count result error"
+    exit 1
+fi    
 
 # dequeue
 # now: {200, 300}
 dequeue_msg=`jq -nc '{dequeue:{}}'`      
-RUN_INFO=fnsad tx wasm execute $CONTRACT_ADDRESS $dequeue_msg --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -y
+RUN_INFO=$(fnsad tx wasm execute $CONTRACT_ADDRESS $dequeue_msg --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -y)
 executeCheck $RUN_INFO "enqueue_error"
 
 # the result should be 500
 sum_msg=`jq -nc '{sum:{}}'`
-RUN_INFO=fnsad query wasm contract-state smart $CONTRACT_ADDRESS $sum_msg
+RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $sum_msg)
 executeCheck $RUN_INFO "query_error"
 
 # the result should be 
@@ -50,7 +54,7 @@ executeCheck $RUN_INFO "query_error"
 # - - 300
 #   - 0
 reducer_msg=`jq -nc '{reducer:{}}'`
-RUN_INFO=fnsad query wasm contract-state smart $CONTRACT_ADDRESS $reducer_msg
+RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $reducer_msg)
 executeCheck $RUN_INFO "query_error"
 
 # the result should be
@@ -60,5 +64,5 @@ executeCheck $RUN_INFO "query_error"
 # empty: []
 # late: []
 list_msg=`jq -nc '{list:{}}'`
-RUN_INFO=fnsad query wasm contract-state smart $CONTRACT_ADDRESS $list_msg
+RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $list_msg)
 executeCheck $RUN_INFO "query_error"
