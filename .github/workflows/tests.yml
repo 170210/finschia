@@ -362,7 +362,7 @@ jobs:
           fnsad start &
           sleep 5
       - name: test
-        run: ./ci_test/queue_ci.sh
+        run: bash ./ci_test/queue_ci.sh
         shell: bash
       - name: fnsad stop
         if: always()
