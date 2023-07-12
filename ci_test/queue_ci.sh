@@ -19,7 +19,7 @@ done
 count_msg=`jq -nc '{count:{}}'`
 fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg
 
-dequeue_msg=`jq -nc '{enqueue:{}}'`      
+dequeue_msg=`jq -nc '{dequeue:{}}'`      
 fnsad tx wasm execute $CONTRACT_ADDRESS $dequeue_msg --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -y
 
 sum_msg=`jq -nc '{sum:{}}'`
