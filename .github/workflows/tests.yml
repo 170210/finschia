@@ -358,11 +358,12 @@ jobs:
         run: ./init_single.sh
         shell: bash
       - name: start local node
-        run: fnsad start &
-      - name: test
         run: |
+          fnsad start &
           sleep 5
-          sh ./ci_test/queue_ci.sh
+      - name: test
+        run: ./ci_test/queue_ci.sh
+        shell: bash
       - name: fnsad stop
         if: always()
         run: |
