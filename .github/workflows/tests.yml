@@ -353,7 +353,7 @@ jobs:
       - name: debug
         run: ls -al
       - name: build install
-        run: build install
+        run: make install
       - name: set configure file
         run: sh init_single.sh
       - name: start local node
