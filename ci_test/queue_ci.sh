@@ -21,7 +21,7 @@ CONTRACT_ADDRESS=`echo $INSTANTIATE_RES | jq '.logs[] | select(.msg_index == 0) 
 # enqueue in order
 # now: {100, 200, 300}
 for value in 100 200 300; do
-    enqueue_msg=`jq -nc --arg value $value '{enqueu:{value:($value | tonumber)}}'`
+    enqueue_msg=`jq -nc --arg value $value '{enqueue:{value:($value | tonumber)}}'`
     RUN_INFO=$(fnsad tx wasm execute $CONTRACT_ADDRESS $enqueue_msg --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -y)
     executeCheck $RUN_INFO "enqueue_error"
 done
