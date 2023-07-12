@@ -4,8 +4,6 @@ name: Tests / Code Coverage
 on:
   pull_request:
   push:
-    branches:
-      - main
 
 jobs:
   cleanup-runs:
@@ -52,6 +50,13 @@ jobs:
       - name: Build
         run: GOARCH=${{ matrix.go-arch }} LEDGER_ENABLED=false make build
         if: env.GIT_DIFF
+      - name: debug
+        run: ls -al
+      - name: Upload Build
+        uses: actions/upload-artifact@v3
+        with:
+          name: fnsad
+          path: ./build/fnsad
 
   split-test-files:
     runs-on: ubuntu-latest
