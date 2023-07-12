@@ -361,10 +361,31 @@ jobs:
         run: fnsad start &
       - name: test
         run: |
-          ps -ef | grep "fnsad start" | grep -v grep
-          sleep 60
-          echo $(curl -s localhost:26657/status | jq -r '.result.sync_info.latest_block_height')
+          STORE_RES=$(fnsad tx wasm store contracts/queue.wasm --from alice --keyring-backend test --chain-id finschia --gas 1500000 -b block -o json -y)
+          echo $STORE_RES
+
+          fnsad query wasm list-code
+          CODE_ID=`echo $STORE_RES | jq '.logs[] | select(.msg_index == 0) | .events[] | select(.type == "store_code") | .attributes[] | select(.key == "code_id") | .value | tonumber'`
+          echo $CODE_ID
+
+          init_msg=`jq -nc '{}'`
+          FROM_ACCOUNT=jack
+          TOKEN_NAME=ST1
+          INSTANTIATE_RES=`fnsad tx wasm instantiate $CODE_ID $init_msg --label $TOKEN_NAME  --admin $(fnsad keys show $FROM_ACCOUNT -a --keyring-backend test) --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -o json -y`
+          echo $INSTANTIATE_RES
+          
+          fnsad query wasm list-contract-by-code $CODE_ID
+          CONTRACT_ADDRESS=`echo $INSTANTIATE_RES | jq '.logs[] | select(.msg_index == 0) | .events[] | select(.type == "instantiate") | .attributes[] | select(.key == "_contract_address") | .value' | sed 's/"//g'`
+          echo $CONTRACT_ADDRESS
+
+          enqueue_msg=`jq -nc --arg value 100 '{enqueue:{value:($value | tonumber)}}'`
+          fnsad tx wasm execute $CONTRACT_ADDRESS $enqueue_msg --from jack --keyring-backend test --chain-id finschia -b block -y
+
+          query_msg=`jq -nc '{sum:{}}'`
+          fnsad query wasm contract-state smart $CONTRACT_ADDRESS $query_msg
+
       - name: fnsad stop
         if: always()
         run: |
+          echo $(curl -s localhost:26657/status | jq -r '.result.sync_info.latest_block_height')
           kill $(ps -ef | grep "fnsad start" | grep -v grep | awk '{print $2}')
