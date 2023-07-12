@@ -366,5 +366,4 @@ jobs:
       - name: fnsad stop
         if: always()
         run: |
-          kill $(ps ef | grep "fnsad start" | grep -v grep ｜ awk '{print $2}')
-          ps -ef | grep "fnsad start" | grep -v grep
+          kill $(ps -ef | grep "fnsad start" | grep -v grep | awk '{print $2}')
