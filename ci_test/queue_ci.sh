@@ -4,7 +4,7 @@ FROM_ACCOUNT='alice'
 TOKEN_NAME='ST1'
 
 executeCheck(){
-    if [[ $1 == *"failed"* ]] then
+    if [[ $1 == *"failed"* ]]; then
         echo $2
         echo $1
         exit 1
