@@ -351,3 +351,12 @@ jobs:
           name: fnsad
       - name: debug
         run: ls -al
+      - name: set configure file
+        run: sh init_single.sh
+      - name: start local node
+        run: |
+          ./fnsad start &
+          sleep 300
+          kill $!
+      - name: test
+        run: echo "hello"
