@@ -355,8 +355,8 @@ jobs:
       - name: build install
         run: make install
       - name: set configure file
+        run: ./init_single.sh
         shell: bash
-        run: sh init_single.sh
       - name: start local node
         run: |
           ./fnsad start &
