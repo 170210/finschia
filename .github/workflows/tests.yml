@@ -355,6 +355,7 @@ jobs:
       - name: build install
         run: make install
       - name: set configure file
+        shell: bash
         run: sh init_single.sh
       - name: start local node
         run: |
