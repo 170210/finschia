@@ -30,12 +30,13 @@ jobs:
   
   check-diffs:
     runs-on: ubuntu-latest
+    # outputs:
+    #   gitDiff: ${{ steps.getDiff.outputs.getDiff }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
-        with:
-          go-version: 1.18
-      - uses: technote-space/get-diff-action@v6.1.2
+      - name: Get diff
+        id: getDiff
+        uses: actions/checkout@v3
+        uses: technote-space/get-diff-action@v6.1.2
         with:
           PATTERNS: |
             **/**.go
@@ -44,6 +45,7 @@ jobs:
             .github/workflows/test.yml
 
   build:
+    needs: check-diffs
     runs-on: ubuntu-latest
 #    if: env.GIT_DIFF
     strategy:
@@ -55,7 +57,7 @@ jobs:
         with:
           go-version: 1.18
       - name: check diffs
-        run: echo $env.GIT_DIFF
+        run: echo ${{ needs.check-diffs.output.diff }}
       - name: Build
         run: GOARCH=${{ matrix.go-arch }} LEDGER_ENABLED=false make build
       - name: debug
