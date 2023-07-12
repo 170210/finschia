@@ -358,9 +358,13 @@ jobs:
         run: ./init_single.sh
         shell: bash
       - name: start local node
-        run: |
-          ./fnsad start &
-          sleep 300
-          kill $!
+        run: fnsad start &
       - name: test
-        run: echo "hello"
+        run: |
+          ps -ef | grep "fnsad start" | grep -v grep
+          sleep 60
+    finally:
+      - name: fnsad stop
+        run: |
+          kill "fnsad start"
+          run: ps -ef | grep "fnsad start" | grep -v grep
