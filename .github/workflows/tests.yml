@@ -45,7 +45,7 @@ jobs:
   build:
     needs: check-diffs
     runs-on: ubuntu-latest
-    if: ${{ needs.check-diffs.output.diff }}
+#    if: ${{ needs.check-diffs.output.diff }}
     strategy:
       matrix:
         go-arch: ["amd64"]
@@ -54,8 +54,6 @@ jobs:
       - uses: actions/setup-go@v4
         with:
           go-version: 1.18
-      - name: check diffs
-        run: echo ${{ needs.check-diffs.output.diff }}
       - name: Build
         run: GOARCH=${{ matrix.go-arch }} LEDGER_ENABLED=false make build
       - name: debug
