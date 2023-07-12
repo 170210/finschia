@@ -361,6 +361,8 @@ jobs:
         run: fnsad start &
       - name: test
         run: |
+          fnsad keys list --keyring-backend test
+          
           STORE_RES=$(fnsad tx wasm store contracts/queue.wasm --from alice --keyring-backend test --chain-id finschia --gas 1500000 -b block -o json -y)
           echo $STORE_RES
 
