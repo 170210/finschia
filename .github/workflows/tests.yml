@@ -349,8 +349,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: fnsad
+          path: ./build
       - name: debug
         run: ls -al
+      - name: build install
+        run: build install
       - name: set configure file
         run: sh init_single.sh
       - name: start local node
