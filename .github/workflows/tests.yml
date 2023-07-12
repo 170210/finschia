@@ -33,9 +33,9 @@ jobs:
     # outputs:
     #   gitDiff: ${{ steps.getDiff.outputs.getDiff }}
     steps:
+      uses: actions/checkout@v3
       - name: Get diff
         id: getDiff
-        uses: actions/checkout@v3
         uses: technote-space/get-diff-action@v6.1.2
         with:
           PATTERNS: |
