@@ -363,8 +363,8 @@ jobs:
         run: |
           ps -ef | grep "fnsad start" | grep -v grep
           sleep 60
-    finally:
       - name: fnsad stop
+        if: always()
         run: |
           kill "fnsad start"
           run: ps -ef | grep "fnsad start" | grep -v grep
