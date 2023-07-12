@@ -87,6 +87,7 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
+    if: env.GIT_DIFF
     needs: split-test-files
     strategy:
       fail-fast: false
@@ -107,21 +108,18 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-${{ matrix.part }}"
-        if: env.GIT_DIFF
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get install -y build-essential libtool autoconf automake
       - name: install libsodium
         run: |
           make libsodium
-        if: env.GIT_DIFF
       - name: test & coverage report creation
         env:
           CGO_CFLAGS: "-I${{ github.workspace }}/tools/sodium/linux_amd64/include"
           CGO_LDFLAGS: "-L${{ github.workspace }}/tools/sodium/linux_amd64/lib -lsodium"
         run: |
           cat pkgs.txt.part.${{ matrix.part }} | xargs go test -mod=readonly -timeout 30m -coverprofile=${{ matrix.part }}profile.out -covermode=atomic -tags='ledger test_ledger_mock goleveldb gcc libsodium'
-        if: env.GIT_DIFF
       - uses: actions/upload-artifact@v3
         with:
           name: "${{ github.sha }}-${{ matrix.part }}-coverage"
@@ -129,6 +127,7 @@ jobs:
 
   upload-coverage-report:
     runs-on: ubuntu-latest
+    if: env.GIT_DIFF
     needs: tests
     steps:
       - uses: actions/checkout@v3
@@ -142,22 +141,17 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-00-coverage"
-        if: env.GIT_DIFF
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-01-coverage"
-        if: env.GIT_DIFF
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-02-coverage"
-        if: env.GIT_DIFF
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-03-coverage"
-        if: env.GIT_DIFF
       - run: |
           cat ./*profile.out | grep -v "mode: atomic" >> coverage.txt
-        if: env.GIT_DIFF
       - name: filter out DONTCOVER
         run: |
           excludelist="$(find ./ -type f -name '*.go' | xargs grep -l 'DONTCOVER')"
@@ -169,12 +163,10 @@ jobs:
             echo "Excluding ${filename} from coverage report..."
             sed -i.bak "/$(echo $filename | sed 's/\//\\\//g')/d" coverage.txt
           done
-        if: env.GIT_DIFF
       - uses: codecov/codecov-action@v3.1.4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.txt
-        if: env.GIT_DIFF
 
   test-integration:
     runs-on: ubuntu-latest
@@ -198,21 +190,18 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-${{ matrix.part }}"
-        if: env.GIT_DIFF
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get install -y build-essential libtool autoconf automake
       - name: install libsodium
         run: |
           make libsodium
-        if: env.GIT_DIFF
       - name: test & coverage report creation
         env:
           CGO_CFLAGS: "-I${{ github.workspace }}/tools/sodium/linux_amd64/include"
           CGO_LDFLAGS: "-L${{ github.workspace }}/tools/sodium/linux_amd64/lib -lsodium"
         run: |
           xargs --arg-file=pkgs.txt.part.${{ matrix.part }} go test -mod=readonly -json -timeout 30m -tags='cli_test goleveldb gcc libsodium' | tee ${{ matrix.part }}-integration-output.txt
-        if: env.GIT_DIFF
       - uses: actions/upload-artifact@v3
         with:
           name: "${{ github.sha }}-${{ matrix.part }}-integration-output"
@@ -220,6 +209,7 @@ jobs:
 
   test-integration-report:
     runs-on: ubuntu-latest
+    if: env.GIT_DIFF
     needs: [test-integration, install-tparse]
     timeout-minutes: 5
     steps:
@@ -234,30 +224,25 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-00-integration-output"
-        if: env.GIT_DIFF
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-01-integration-output"
-        if: env.GIT_DIFF
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-02-integration-output"
-        if: env.GIT_DIFF
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-03-integration-output"
-        if: env.GIT_DIFF
       - uses: actions/cache@v3.3.1
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-tparse-binary
-        if: env.GIT_DIFF
       - name: Generate integration test report
         run: cat ./*-integration-output.txt | ~/go/bin/tparse
-        if: env.GIT_DIFF
 
   test-integration-multi-node:
     runs-on: ubuntu-latest
+    if: env.GIT_DIFF
     needs: split-test-files
     strategy:
       fail-fast: false
@@ -278,20 +263,17 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-${{ matrix.part }}"
-        if: env.GIT_DIFF
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get install -y build-essential libtool autoconf automake
       - name: install libsodium
         run: make libsodium
-        if: env.GIT_DIFF
       - name: test report creation
         env:
           CGO_CFLAGS: "-I${{ github.workspace }}/tools/sodium/linux_amd64/include"
           CGO_LDFLAGS: "-L${{ github.workspace }}/tools/sodium/linux_amd64/lib -lsodium"
         run: |
           xargs --arg-file=pkgs.txt.part.${{ matrix.part }} go test -mod=readonly -json -timeout 30m -tags='cli_multi_node_test goleveldb libsodium' | tee ${{ matrix.part }}-integration-multi-node-output.txt
-        if: env.GIT_DIFF
       - uses: actions/upload-artifact@v3
         with:
           name: "${{ github.sha }}-${{ matrix.part }}-integration-multi-node-output"
@@ -299,6 +281,7 @@ jobs:
 
   test_integration_multi_node_report:
     runs-on: ubuntu-latest
+    if: env.GIT_DIFF
     needs: [test-integration-multi-node, install-tparse]
     timeout-minutes: 5
     steps:
@@ -313,27 +296,21 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-00-integration-multi-node-output"
-        if: env.GIT_DIFF
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-01-integration-multi-node-output"
-        if: env.GIT_DIFF
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-02-integration-multi-node-output"
-        if: env.GIT_DIFF
       - uses: actions/download-artifact@v3
         with:
           name: "${{ github.sha }}-03-integration-multi-node-output"
-        if: env.GIT_DIFF
       - uses: actions/cache@v3.3.1
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-tparse-binary
-        if: env.GIT_DIFF
       - name: Generate multi node integration test report
         run: cat ./*-integration-multi-node-output.txt | ~/go/bin/tparse
-        if: env.GIT_DIFF
 
   test-localnet-blocks:
     runs-on: ubuntu-latest
@@ -359,7 +336,7 @@ jobs:
             exit 1
           fi
   
-  test-smart-contract-on-local-node:
+  tests-smart-contract-on-local-node:
 #  if: env.GIT_DIFF
     runs-on: ubuntu-latest
     needs: build
