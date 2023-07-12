@@ -383,4 +383,4 @@ jobs:
         with:
           name: fnsad
       - name: debug
-        uses: ls -al 
+        run: ls -al 

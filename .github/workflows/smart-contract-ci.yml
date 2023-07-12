@@ -1,7 +1,9 @@
 name: Smart Contract CI
 
-on: push
-
+on: 
+  push:
+    main
+    
 jobs:
   cleanup-runs:
     runs-on: ubuntu-latest
