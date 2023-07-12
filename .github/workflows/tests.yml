@@ -363,6 +363,7 @@ jobs:
         run: |
           ps -ef | grep "fnsad start" | grep -v grep
           sleep 60
+          echo $(curl -s localhost:26657/status | jq -r '.result.sync_info.latest_block_height')
       - name: fnsad stop
         if: always()
         run: |
