@@ -86,6 +86,7 @@ list_msg=`jq -nc '{list:{}}'`
 executeAndCheck "$list_msg" "$expected_result"
 
 # check open_iterators
+expected_result='data:
+  {}'
 openIterators_msg=`jq -nc '{open_iterators:{count:3}}'`
-query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $openIterators_msg)
-executeCheck "$query_result"
+executeAndCheck "$openIterators_msg" "$expected_result"
