@@ -15,8 +15,8 @@ queryCheck(){
     local result=$1
     local expected_result=$2
     if [[ $result != $expected_result ]]; then
-        echo "expected result is :$result"
-        echo "but query result is:$expected_result"
+        echo "expected result is:  $result"
+        echo "but query result is: $expected_result"
 #        exit 1
     fi    
 }
@@ -46,7 +46,8 @@ for value in 100 200 300; do
 done
 
 # check count
-expected_result='data: count: 3'
+expected_result=
+'data: \ncount: 3'
 count_msg=`jq -nc '{count:{}}'`
 query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg)
 executeCheck "$query_result"
