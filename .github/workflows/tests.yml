@@ -360,7 +360,7 @@ jobs:
       - name: start local node
         run: |
           fnsad start &
-          sleep 5
+          sleep 1
       - name: test
         run: bash ./ci_test/queue_ci.sh
         shell: bash
