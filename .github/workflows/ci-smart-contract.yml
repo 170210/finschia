@@ -119,6 +119,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: get-cosmwasm-releases
     steps:
+      - uses: actions/checkout@v3
       - name: docker build
         run: |
           cat Makefile | grep "build-docker"
