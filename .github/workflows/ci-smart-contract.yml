@@ -121,4 +121,7 @@ jobs:
     steps:
       - name: docker build
         run: |
+          cat Makefile | grep "build-docker"
+          cat Makefile | grep "docker-build"
+
           make docker-build
