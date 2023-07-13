@@ -10,7 +10,6 @@ ifeq (, $(VERSION))
     VERSION = $(subst /,_,$(BRANCH))-$(COMMIT)
   endif
 endif
-$(info "$VERSION")
 
 PACKAGES_SIMTEST=$(shell go list ./... | grep '/simulation')
 LEDGER_ENABLED ?= true

@@ -50,7 +50,7 @@ jobs:
             go.sum
             .github/workflows/test.yml
       - name: Build
-        run: GOARCH=${{ matrix.go-arch }} LEDGER_ENABLED=false make build
+        run: GOARCH=${{ matrix.go-arch }} make build
 #        if: env.GIT_DIFF
 
   split-test-files:
