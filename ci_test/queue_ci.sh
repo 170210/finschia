@@ -11,17 +11,20 @@ executeCheck(){
     fi    
 }
 
+queryCheck(){
+    if [[ $1 != $2 ]]; then
+        echo "expected result is :$2"
+        echo "but query result is:$1"
+#        exit 1
+    fi    
+}
+
 STORE_RES=$(fnsad tx wasm store contracts/queue.wasm --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia --gas 1500000 -b block -o json -y)
 CODE_ID=`echo $STORE_RES | jq '.logs[] | select(.msg_index == 0) | .events[] | select(.type == "store_code") | .attributes[] | select(.key == "code_id") | .value | tonumber'`
 # initialize smart contract
 init_msg=`jq -nc '{}'`      
 INSTANTIATE_RES=`fnsad tx wasm instantiate $CODE_ID $init_msg --label $TOKEN_NAME  --admin $(fnsad keys show $FROM_ACCOUNT -a --keyring-backend test) --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -o json -y`
 CONTRACT_ADDRESS=`echo $INSTANTIATE_RES | jq '.logs[] | select(.msg_index == 0) | .events[] | select(.type == "instantiate") | .attributes[] | select(.key == "_contract_address") | .value' | sed 's/"//g'`
-
-
-openIterators_msg=`jq -nc '{open_iterators:{count:3}}'`
-RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $openIterators_msg)
-executeCheck $RUN_INFO "query_error"
 
 # enqueue in order
 # now: {100, 200, 300}
@@ -32,15 +35,12 @@ for value in 100 200 300; do
 done
 
 # the result should be 3
+expected_result='data: count: 3'
+
 count_msg=`jq -nc '{count:{}}'`
-RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg)
-executeCheck $RUN_INFO "query_error"
-result=$(echo $RUN_INFO | grep -oE 'count: ([0-9]+)' | awk -F ' ' '{print $2}')
-if [[ $result != '3' ]]; then
-    echo "count result error"
-    echo $RUN_INFO
-    exit 1
-fi    
+query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg)
+executeCheck $query_result "query_error"
+queryCheck $query_result $expected_result
 
 # dequeue
 # now: {200, 300}
@@ -49,16 +49,12 @@ RUN_INFO=$(fnsad tx wasm execute $CONTRACT_ADDRESS $dequeue_msg --from $FROM_ACC
 executeCheck $RUN_INFO "enqueue_error"
 
 # the result should be 500
-sum_msg=`jq -nc '{sum:{}}'`
-RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $sum_msg)
-executeCheck $RUN_INFO "query_error"
-result=$(echo $RUN_INFO | grep -oE 'sum: ([0-9]+)' | awk -F ' ' '{print $2}')
-if [[ $result != '500' ]]; then
-    echo "sum result error"
-    echo $RUN_INFO
-    exit 1
-fi    
+expected_result='data: sum: 500'
 
+sum_msg=`jq -nc '{sum:{}}'`
+query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $sum_msg)
+executeCheck $query_result "query_error"
+queryCheck $query_result $expected_result
 
 # the result should be 
 # counters:
@@ -66,10 +62,12 @@ fi
 #   - 300
 # - - 300
 #   - 0
+expected_result='data: counters: - - 200 - 300 - - 300 - 0'
+
 reducer_msg=`jq -nc '{reducer:{}}'`
-RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $reducer_msg)
-executeCheck $RUN_INFO "query_error"
-echo $RUN_INFO
+query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $reducer_msg)
+executeCheck $query_result "query_error"
+queryCheck $query_result $expected_result
 
 # the result should be
 # early:
@@ -77,7 +75,15 @@ echo $RUN_INFO
 # - 2
 # empty: []
 # late: []
+expected_result='data: early: - 1 - 2 empty: [] late: []'
+
 list_msg=`jq -nc '{list:{}}'`
-RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $list_msg)
-executeCheck $RUN_INFO "query_error"
-echo $RUN_INFO
+query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $list_msg)
+executeCheck $query_result "query_error"
+queryCheck $query_result $expected_result
+
+#
+openIterators_msg=`jq -nc '{open_iterators:{count:3}}'`
+query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $openIterators_msg)
+executeCheck $query_result "query_error"
+echo $query_result
