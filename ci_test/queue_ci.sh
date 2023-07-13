@@ -46,8 +46,8 @@ for value in 100 200 300; do
 done
 
 # check count
-expected_result=
-'data: \ncount: 3'
+expected_result='data:
+  count: 3'
 count_msg=`jq -nc '{count:{}}'`
 query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg)
 executeCheck "$query_result"
@@ -60,17 +60,28 @@ run_info=$(fnsad tx wasm execute $CONTRACT_ADDRESS $dequeue_msg --from $FROM_ACC
 executeCheck "$run_info"
 
 # check sum
-expected_result='data: sum: 500'
+expected_result='data:
+  sum: 500'
 sum_msg=`jq -nc '{sum:{}}'`
 executeAndCheck "$sum_msg" "$expected_result"
 
 # check reducer
-expected_result='data: counters: - - 200 - 300 - - 300 - 0'
+expected_result='data:
+  counters:
+  - - 200
+    - 300
+  - - 300
+    - 0'
 reducer_msg=`jq -nc '{reducer:{}}'`
 executeAndCheck "$reducer_msg" "$expected_result"
 
 # check list
-expected_result='data: early: - 1 - 2 empty: [] late: []'
+expected_result='data:
+  early:
+  - 1
+  - 2
+  empty: []
+  late: []'
 list_msg=`jq -nc '{list:{}}'`
 executeAndCheck "$list_msg" "$expected_result"
 
