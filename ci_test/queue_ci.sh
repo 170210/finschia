@@ -18,7 +18,7 @@ queryCheck(){
         echo -e "expected result is:\n$expected_result"
         echo -e "query result is:\n$result"
 #        exit 1
-    fi    
+    fi
 }
 
 executeAndCheck() {
@@ -26,6 +26,7 @@ executeAndCheck() {
     local expected_result=$2
     
     query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $query_msg)
+    echo $query_result
     executeCheck "$query_result"
     queryCheck "$query_result" "$expected_result"
 }
@@ -86,7 +87,6 @@ list_msg=`jq -nc '{list:{}}'`
 executeAndCheck "$list_msg" "$expected_result"
 
 # check open_iterators
-expected_result='data:
-  {}'
+expected_result='data: {}'
 openIterators_msg=`jq -nc '{open_iterators:{count:3}}'`
 executeAndCheck "$openIterators_msg" "$expected_result"
