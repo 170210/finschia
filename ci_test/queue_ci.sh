@@ -15,8 +15,8 @@ queryCheck(){
     local result=$1
     local expected_result=$2
     if [[ $result != $expected_result ]]; then
-        echo "expected result is:\n$result"
-        echo "but query result is:\n$expected_result"
+        echo -e "expected result is:\n$result"
+        echo -e "but query result is:\n$expected_result"
 #        exit 1
     fi    
 }
