@@ -18,6 +18,11 @@ init_msg=`jq -nc '{}'`
 INSTANTIATE_RES=`fnsad tx wasm instantiate $CODE_ID $init_msg --label $TOKEN_NAME  --admin $(fnsad keys show $FROM_ACCOUNT -a --keyring-backend test) --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -o json -y`
 CONTRACT_ADDRESS=`echo $INSTANTIATE_RES | jq '.logs[] | select(.msg_index == 0) | .events[] | select(.type == "instantiate") | .attributes[] | select(.key == "_contract_address") | .value' | sed 's/"//g'`
 
+
+openIterators_msg=`jq -nc '{count:3}'`
+RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $openIterators_msg)
+executeCheck $RUN_INFO "query_error"
+
 # enqueue in order
 # now: {100, 200, 300}
 for value in 100 200 300; do
@@ -66,9 +71,5 @@ executeCheck $RUN_INFO "query_error"
 # empty: []
 # late: []
 list_msg=`jq -nc '{list:{}}'`
-RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $list_msg)
-executeCheck $RUN_INFO "query_error"
-
-openIterators_msg=`jq -nc '{counters:3}'`
 RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $list_msg)
 executeCheck $RUN_INFO "query_error"
