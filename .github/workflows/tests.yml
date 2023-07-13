@@ -336,7 +336,10 @@ jobs:
         run: |
           response=$(curl -s "https://api.github.com/repos/Finschia/cosmwasm/releases")
           versions=($(echo "$response" | jq -r '.[].tag_name'))
-          echo -e "current cosmwasm release versions::\n$versions"
+          for version in "${versions[@]}"; do
+            echo "$version"
+          done
+#          echo -e "current cosmwasm release versions::\n$versions"
   tests-smart-contract-on-local-node:
 #  if: env.GIT_DIFF
     runs-on: ubuntu-latest
