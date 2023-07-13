@@ -4,19 +4,18 @@ FROM_ACCOUNT='alice'
 TOKEN_NAME='ST1'
 
 executeCheck(){
-    if [[ $1 == *"failed"* ]]; then
-        echo $2
-        echo $1
-        exit 1
+    local result=$1
+    if [[ "$result" == *"failed"* ]]; then
+        echo "$result"
     fi    
 }
 
 queryCheck(){
-    echo $1
-    echo $2
-    if [[ $1 != $2 ]]; then
-        echo "expected result is :$2"
-        echo "but query result is:$1"
+    local result=$1
+    local expected_result=$2
+    if [[ $result != $expected_result ]]; then
+        echo "expected result is :$result"
+        echo "but query result is:$expected_result"
 #        exit 1
     fi    
 }
@@ -33,45 +32,45 @@ CONTRACT_ADDRESS=`echo $INSTANTIATE_RES | jq '.logs[] | select(.msg_index == 0) 
 for value in 100 200 300; do
     enqueue_msg=`jq -nc --arg value $value '{enqueue:{value:($value | tonumber)}}'`
     run_info=$(fnsad tx wasm execute $CONTRACT_ADDRESS $enqueue_msg --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -y)
-    executeCheck $run_info "enqueue_error"
+    executeCheck $run_info
 done
 
 # check count
 expected_result='data: count: 3'
 count_msg=`jq -nc '{count:{}}'`
 query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg)
-executeCheck $query_result "query_error"
-queryCheck $query_result $expected_result
+executeCheck "$query_result"
+queryCheck "$query_result" "$expected_result"
 
 # check dequeue
 # now: {200, 300}
 dequeue_msg=`jq -nc '{dequeue:{}}'`      
 run_info=$(fnsad tx wasm execute $CONTRACT_ADDRESS $dequeue_msg --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -y)
-executeCheck $run_info "enqueue_error"
+executeCheck "$run_info"
 
 # check sum
 expected_result='data: sum: 500'
 sum_msg=`jq -nc '{sum:{}}'`
 query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $sum_msg)
-executeCheck $query_result "query_error"
-queryCheck $query_result $expected_result
+executeCheck "$query_result"
+queryCheck "$query_result" "$expected_result"
 
 # check reducer
 expected_result='data: counters: - - 200 - 300 - - 300 - 0'
 reducer_msg=`jq -nc '{reducer:{}}'`
 query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $reducer_msg)
-executeCheck $query_result "query_error"
-queryCheck $query_result $expected_result
+executeCheck "$query_result"
+queryCheck "$query_result" "$expected_result"
 
 # check list
 expected_result='data: early: - 1 - 2 empty: [] late: []'
 list_msg=`jq -nc '{list:{}}'`
 query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $list_msg)
-executeCheck $query_result "query_error"
-queryCheck $query_result $expected_result
+executeCheck "$query_result"
+queryCheck "$query_result" "$expected_result"
 
 # check open_iterators
 openIterators_msg=`jq -nc '{open_iterators:{count:3}}'`
 query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $openIterators_msg)
-executeCheck $query_result "query_error"
+executeCheck "$query_result"
 echo $query_result
