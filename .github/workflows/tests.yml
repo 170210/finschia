@@ -345,7 +345,7 @@ jobs:
     needs: [build, get-cosmwasm-releases]
     strategy:
       matrix:
-        release-version: [v1.1.9-0.7.0,v1.0.0-0.6.0]
+        release-version: ["v1.1.9-0.7.0","v1.0.0-0.6.0"]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
@@ -355,7 +355,7 @@ jobs:
         uses: dsaltares/fetch-gh-release-asset@master
         with:
           repo: 'Finschia/cosmwasm'
-          version: ${{ matrix.release-version }}
+          version: tags/${{ matrix.release-version }}
           regex: true
           file: '.*'
           target: 'contracts/'
@@ -376,6 +376,7 @@ jobs:
         run: ./init_single.sh
         shell: bash
       - name: start local node
+        id: node_start
         run: |
           fnsad start &
           sleep 1
@@ -383,7 +384,7 @@ jobs:
         run: bash ./ci_test/queue_ci.sh
         shell: bash
       - name: fnsad stop
-        if: always()
+        if: ${{ always() && steps.node_start.outputs.success == 'true' }}
         run: |
           echo $(curl -s localhost:26657/status | jq -r '.result.sync_info.latest_block_height')
           kill $(ps -ef | grep "fnsad start" | grep -v grep | awk '{print $2}')
