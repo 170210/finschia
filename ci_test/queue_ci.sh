@@ -30,7 +30,7 @@ done
 count_msg=`jq -nc '{count:{}}'`
 RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg)
 executeCheck $RUN_INFO "query_error"
-result=$(echo $test | grep 'count:' | awk -F ' ' '{print $2}')
+result=$(echo $RUN_INFO | grep 'count:' | awk -F ' ' '{print $2}')
 echo $result
 if [[ $result != '3' ]]; then
     echo "count result error"
@@ -66,5 +66,9 @@ executeCheck $RUN_INFO "query_error"
 # empty: []
 # late: []
 list_msg=`jq -nc '{list:{}}'`
+RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $list_msg)
+executeCheck $RUN_INFO "query_error"
+
+openIterators_msg=`jq -nc '{counters:3}'`
 RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $list_msg)
 executeCheck $RUN_INFO "query_error"
