@@ -19,7 +19,7 @@ INSTANTIATE_RES=`fnsad tx wasm instantiate $CODE_ID $init_msg --label $TOKEN_NAM
 CONTRACT_ADDRESS=`echo $INSTANTIATE_RES | jq '.logs[] | select(.msg_index == 0) | .events[] | select(.type == "instantiate") | .attributes[] | select(.key == "_contract_address") | .value' | sed 's/"//g'`
 
 
-openIterators_msg=`jq -nc '{count:3}'`
+openIterators_msg=`jq -nc '{open_iterators:{count:3}}'`
 RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $openIterators_msg)
 executeCheck $RUN_INFO "query_error"
 
