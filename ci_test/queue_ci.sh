@@ -14,12 +14,10 @@ executeCheck(){
 queryCheck(){
     local result=$1
     local expected_result=$2
-    if [[ $result != $expected_result ]]; then
-        echo -e "expected result is:\n$result"
-        echo -e "but query result is:\n$expected_result"
+    if [[ "$result" != "$expected_result" ]]; then
+        echo -e "expected result is:\n$expected_result"
+        echo -e "query result is:\n$result"
 #        exit 1
-        $result
-        $expected_result
     fi    
 }
 
