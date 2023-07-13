@@ -36,11 +36,10 @@ count_msg=`jq -nc '{count:{}}'`
 RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg)
 executeCheck $RUN_INFO "query_error"
 result=$(echo $RUN_INFO | grep -oE 'count: ([0-9]+)' | awk -F ' ' '{print $2}')
-echo $result
 if [[ $result != '3' ]]; then
     echo "count result error"
     echo $RUN_INFO
-#     exit 1
+    exit 1
 fi    
 
 # dequeue
@@ -53,6 +52,13 @@ executeCheck $RUN_INFO "enqueue_error"
 sum_msg=`jq -nc '{sum:{}}'`
 RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $sum_msg)
 executeCheck $RUN_INFO "query_error"
+result=$(echo $RUN_INFO | grep -oE 'sum: ([0-9]+)' | awk -F ' ' '{print $2}')
+if [[ $result != '500' ]]; then
+    echo "sum result error"
+    echo $RUN_INFO
+    exit 1
+fi    
+
 
 # the result should be 
 # counters:
@@ -63,6 +69,7 @@ executeCheck $RUN_INFO "query_error"
 reducer_msg=`jq -nc '{reducer:{}}'`
 RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $reducer_msg)
 executeCheck $RUN_INFO "query_error"
+echo $RUN_INFO
 
 # the result should be
 # early:
@@ -73,3 +80,4 @@ executeCheck $RUN_INFO "query_error"
 list_msg=`jq -nc '{list:{}}'`
 RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $list_msg)
 executeCheck $RUN_INFO "query_error"
+echo $RUN_INFO
