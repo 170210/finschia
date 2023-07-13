@@ -394,5 +394,5 @@ jobs:
     steps:
       - name: docker build
         run: |
-          make docker-build
+          make build-docker
           sh init_single.sh docker 
