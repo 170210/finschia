@@ -329,11 +329,12 @@ jobs:
           fi
   get-cosmwasm-releases:
     runs-on: ubuntu-latest
-    # outputs:
-    #   cosmwasm-versions: ${{ steps.cosmwasm-releases.outputs.versions }}
+    outputs:
+      cosmwasm-versions: ${{ steps.cosmwasm-releases.outputs.versions }}
     steps:
       - uses: actions/checkout@v3
       - name: Get cosmwasm releases
+        id: cosmwasm-releases
         run: |
           response=$(curl -s "https://api.github.com/repos/Finschia/cosmwasm/releases")
           versions=$(echo "$response" | jq -r '[.[].tag_name]' | jq -c .)
@@ -344,7 +345,7 @@ jobs:
     needs: [build, get-cosmwasm-releases]
     strategy:
       matrix:
-        release-version: ${{ needs.get-cosmwasm-releases.state.versions }}
+        release-version: ${{ needs.get-cosmwasm-releases.outputs.cosmwasm-versions }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
