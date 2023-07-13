@@ -43,7 +43,8 @@ jobs:
         with:
           go-version: 1.18
       - name: Build
-        run: GOARCH=${{ matrix.go-arch }} LEDGER_ENABLED=false make build
+        run: |
+          make build
       - name: debug
         run: ls -al
       - name: Upload Build
