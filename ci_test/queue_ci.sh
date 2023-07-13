@@ -31,10 +31,11 @@ count_msg=`jq -nc '{count:{}}'`
 RUN_INFO=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg)
 executeCheck $RUN_INFO "query_error"
 result=$(echo $test | grep 'count:' | awk -F ' ' '{print $2}')
-# if [[ $result != "3" ]]; then
-#     echo "count result error"
+echo $result
+if [[ $result != 3 ]]; then
+    echo "count result error"
 #     exit 1
-# fi    
+fi    
 
 # dequeue
 # now: {200, 300}
