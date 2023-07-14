@@ -133,13 +133,13 @@ jobs:
         with:
           name: finschia-ci-test
           path: /tmp/finschia-ci-test.tar
-  debug:
-    runs-on: ubuntu-latest
-    steps:
-      - name: debug
-        run: |
-          pwd
-          echo ${{ env.GITHUB_WORKSPACE }}
+  # debug:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: debug
+  #       run: |
+  #         pwd
+  #         echo ${{ env.GITHUB_WORKSPACE }}
   tests-smart-contract-on-docker:
     runs-on: ubuntu-latest
     needs: [build-finschia-docker, get-cosmwasm-releases]
@@ -177,8 +177,7 @@ jobs:
         id: docker_start
         run: |
           ./init_single.sh docker
-          ls -al
-          cd /.finschia
+
           docker run -d -p 26656:26656 -p 26657:26657 -v $/home/runner/.finschia:/root/.finschia finschia/finschianode fnsad start
           sleep 5
           echo "container_id=${container_id}" >> "$GITHUB_OUTPUT"\
