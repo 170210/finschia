@@ -148,6 +148,7 @@ jobs:
         release-version: ${{ fromJson(needs.get-cosmwasm-releases.outputs.cosmwasm-versions) }}
     steps:
       - uses: actions/checkout@v3
+      - uses: docker/setup-buildx-action@v2
       - uses: actions/setup-go@v4
         with:
           go-version: 1.18
@@ -159,6 +160,15 @@ jobs:
           regex: true
           file: '.*'
           target: 'contracts/'
+      - name: Download docker image
+        uses: actions/download-artifact@v3
+        with:
+          name: finschia-ci-test
+          path: /tmp
+      - name: Load image
+        run: |
+          docker load --input /tmp/myimage.tar
+          docker image ls -a
       # - name: Download build
       #   uses: actions/download-artifact@v3
       #   with:
@@ -166,8 +176,8 @@ jobs:
       #     path: ./build
       # - name: build install
       #   run: make install
-      - name: docker build
-        run: make docker-build
+      # - name: docker build
+      #   run: make docker-build
       # - name: set configure file
       #   run: ./init_single.sh docker
       #   shell: bash
