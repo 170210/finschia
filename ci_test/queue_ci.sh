@@ -7,7 +7,7 @@ executeCheck(){
     local result=$1
     if [[ "$result" == *"failed"* ]]; then
         echo "$result"
-#       exit 1        
+        exit 1        
     fi    
 }
 
@@ -17,16 +17,14 @@ queryCheck(){
     if [[ "$result" != "$expected_result" ]]; then
         echo -e "expected result is:\n$expected_result"
         echo -e "query result is:\n$result"
-#        exit 1
+        exit 1
     fi
 }
 
 executeAndCheck() {
     local query_msg=$1
     local expected_result=$2
-    
     query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $query_msg)
-    echo $query_result
     executeCheck "$query_result"
     queryCheck "$query_result" "$expected_result"
 }
@@ -41,7 +39,7 @@ CONTRACT_ADDRESS=`echo $INSTANTIATE_RES | jq '.logs[] | select(.msg_index == 0) 
 # check enqueue
 # now: {100, 200, 300}
 for value in 100 200 300; do
-    enqueue_msg=`jq -nc --arg value $value '{enqueue:{value:($value | tonumber)}}'`
+    enqueue_msg=`jq -nc --arg value $value '{enqueu:{value:($value | tonumber)}}'`
     run_info=$(fnsad tx wasm execute $CONTRACT_ADDRESS $enqueue_msg --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -y)
     executeCheck $run_info
 done
