@@ -5,8 +5,9 @@ TOKEN_NAME='ST1'
 
 executeCheck(){
     local result=$1
+    local meg=$2
     if [[ "$result" == *"failed"* ]]; then
-        echo "$result"
+        echo -e "$msg\n$result"
         exit 1        
     fi    
 }
@@ -25,7 +26,7 @@ executeAndCheck() {
     local query_msg=$1
     local expected_result=$2
     query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $query_msg)
-    executeCheck "$query_result"
+    executeCheck "$query_result" “$query_msg”
     queryCheck "$query_result" "$expected_result"
 }
 
@@ -39,24 +40,22 @@ CONTRACT_ADDRESS=`echo $INSTANTIATE_RES | jq '.logs[] | select(.msg_index == 0) 
 # check enqueue
 # now: {100, 200, 300}
 for value in 100 200 300; do
-    enqueue_msg=`jq -nc --arg value $value '{enqueu:{value:($value | tonumber)}}'`
+    enqueue_msg=`jq -nc --arg value $value '{enqueue:{value:($value | tonumber)}}'`
     run_info=$(fnsad tx wasm execute $CONTRACT_ADDRESS $enqueue_msg --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -y)
-    executeCheck $run_info
+    executeCheck $run_info $enqueue_msg
 done
 
 # check count
 expected_result='data:
   count: 3'
 count_msg=`jq -nc '{count:{}}'`
-query_result=$(fnsad query wasm contract-state smart $CONTRACT_ADDRESS $count_msg)
-executeCheck "$query_result"
-queryCheck "$query_result" "$expected_result"
+executeAndCheck "$count_msg" "$expected_result"
 
 # check dequeue
 # now: {200, 300}
 dequeue_msg=`jq -nc '{dequeue:{}}'`      
 run_info=$(fnsad tx wasm execute $CONTRACT_ADDRESS $dequeue_msg --from $FROM_ACCOUNT --keyring-backend test --chain-id finschia -b block -y)
-executeCheck "$run_info"
+executeCheck "$run_info" $enqueue_msg
 
 # check sum
 expected_result='data:
