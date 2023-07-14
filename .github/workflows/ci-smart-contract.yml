@@ -154,7 +154,7 @@ jobs:
       - name: start docker node
         id: fnsad_start
         run: |
-          container_id=$(docker run -i -d \
+          container_id=$(docker run -d \
             -p 26656:26656 -p 26657:26657 \
             -v ${HOME}/.finschia:/root/.finschia \
             -v ${HOME}/ci_test:/root/ci_test \
