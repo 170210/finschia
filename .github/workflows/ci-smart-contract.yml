@@ -138,10 +138,11 @@ jobs:
     steps:
       - name: debug
         run: |
+          pwd
           echo ${{ env.GITHUB_WORKSPACE }}
   tests-smart-contract-on-docker:
     runs-on: ubuntu-latest
-    needs: [build, get-cosmwasm-releases]
+    needs: [build, get-cosmwasm-releases, build-finschia-docker]
     strategy:
       fail-fast: false
       matrix:
