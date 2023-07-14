@@ -179,12 +179,7 @@ jobs:
           ./init_single.sh docker
           ls -al
           cd /.finschia
-          container_id=$(docker run -d \
-            -p 26656:26656 -p 26657:26657 \
-            -v ${{ env.GITHUB_WORKSPACE }}/.finschia:/root/.finschia \
-            -v $(pwd)/ci_test:/root/ci_test \
-            -v $(pwd)/contracts:/root/contracts \
-            finschia/finschianode fnsad start)
+          docker run -d -p 26656:26656 -p 26657:26657 -v ${HOME}/.finschia:/root/.finschia finschia/finschianode fnsad start
           sleep 5
           echo "container_id=${container_id}" >> "$GITHUB_OUTPUT"\
           echo "$container_id"
@@ -196,3 +191,10 @@ jobs:
       - name: fnsad stop
         if: ${{ always() && steps.docker_start.conclusion == 'success' }}
         run: docker stop ${{ steps.docker_start.outputs.container_id }}
+
+          # container_id=$(docker run -d \
+          #   -p 26656:26656 -p 26657:26657 \
+          #   -v ${{ env.GITHUB_WORKSPACE }}/.finschia:/root/.finschia \
+          #   -v $(pwd)/ci_test:/root/ci_test \
+          #   -v $(pwd)/contracts:/root/contracts \
+          #   finschia/finschianode fnsad start)
