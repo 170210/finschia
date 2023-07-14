@@ -177,6 +177,7 @@ jobs:
         id: docker_start
         run: |
           ./init_single.sh docker
+          ls /home/runner
 
           docker run -d -p 26656:26656 -p 26657:26657 -v $/home/runner/.finschia:/root/.finschia finschia/finschianode fnsad start
           sleep 5
