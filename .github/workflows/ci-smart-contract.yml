@@ -186,7 +186,7 @@ jobs:
             finschia/finschianode fnsad start)
           echo $container_id
           echo "container_id=$container_id" >> "$GITHUB_OUTPUT"
-          sleep 1
+          sleep 5
         shell: bash
       - name: test
         run: |
