@@ -101,10 +101,12 @@ jobs:
       - name: set configure file
         run: ./init_single.sh
         shell: bash
+      # to wait for finschia to start
       - name: start local node
         id: fnsad_start
         run: |
           fnsad start &
+          sleep 1
       - name: test
         run: bash ./ci_test/queue_ci.sh
         shell: bash
@@ -164,7 +166,7 @@ jobs:
           docker exec $container_id ls -al
           echo "container_id=${container_id}" >> "$GITHUB_OUTPUT"
       - name: test
-        run: docker exec ${{ steps.docker_start.outputs.container_id }} bash ./ci_test/queue_ci.sh
+        run: docker exec ${{ steps.docker_start.outputs.container_id }} /bin/sh ./ci_test/queue_ci.sh
       - name: fnsad stop
         if: ${{ always() && steps.docker_start.conclusion == 'success' }}
         run: docker stop ${{ steps.docker_start.outputs.container_id }}
