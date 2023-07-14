@@ -20,8 +20,8 @@ queryCheck(){
     # local result=$(echo "$1" | tr -d '[:space:]')
     # local expected_result=$(echo "$2" | tr -d '[:space:]')
     if [[ "$result" != "$expected_result" ]]; then
-        echo -e "$expected_result" | xxd -p
-        echo -e "$result" | xxd -p
+        echo "$expected_result" | xxd -p
+        echo "$result" | xxd -p
         exit 1
     fi
 }
