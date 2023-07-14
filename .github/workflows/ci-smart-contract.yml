@@ -167,6 +167,8 @@ jobs:
           sleep 5
           echo "container_id=${container_id}" >> "$GITHUB_OUTPUT"\
           echo "$container_id"
+          sleep 10
+          docker ps -a
       - name: test
         run: docker exec ${{ steps.docker_start.outputs.container_id }} /bin/sh ./ci_test/queue_ci.sh
       - name: fnsad stop
