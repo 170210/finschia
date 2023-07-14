@@ -69,7 +69,7 @@ jobs:
     needs: get-cosmwasm-releases
     steps:
       - name: debug
-        run: echo ${{ fromJson(needs.get-cosmwasm-releases.outputs.cosmwasm-versions) }}
+        run: echo ${{ needs.get-cosmwasm-releases.outputs.cosmwasm-versions }}
   tests-smart-contract-on-local-node:
 #  if: env.GIT_DIFF
     runs-on: ubuntu-latest
