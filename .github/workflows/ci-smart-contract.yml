@@ -152,12 +152,14 @@ jobs:
         run: make install
       - name: docker build
         run: make docker-build
-      - name: set configure file
-        run: ./init_single.sh docker
-        shell: bash
+      # - name: set configure file
+      #   run: ./init_single.sh docker
+      #   shell: bash
       - name: start docker node
         id: docker_start
         run: |
+          docker image ls
+          ./init_single.sh docker
           container_id=$(docker run -d \
             -p 26656:26656 -p 26657:26657 \
             -v $(pwd)/.finschia:/root/.finschia \
@@ -169,6 +171,7 @@ jobs:
           echo "$container_id"
           sleep 10
           docker ps -a
+        shell: bash
       - name: test
         run: docker exec ${{ steps.docker_start.outputs.container_id }} /bin/sh ./ci_test/queue_ci.sh
       - name: fnsad stop
