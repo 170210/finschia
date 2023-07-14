@@ -186,13 +186,11 @@ jobs:
             finschia/finschianode fnsad start)
           echo $container_id
           echo "container_id=$container_id" >> "$GITHUB_OUTPUT"
-          docker ps -a
-          sleep 5
+          sleep 1
         shell: bash
       - name: test
         run: |
-          docker ps -a
-          echo "${{ steps.docker_start.outputs.container_id }}"
+          docker exec ${{ steps.docker_start.outputs.container_id }} apk add --no-cache jq
           docker exec ${{ steps.docker_start.outputs.container_id }} /bin/sh ./ci_test/queue_ci.sh
       - name: fnsad stop
         if: ${{ always() && steps.docker_start.conclusion == 'success' }}
