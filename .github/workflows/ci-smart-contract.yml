@@ -164,9 +164,9 @@ jobs:
             -v $(pwd)/ci_test:/root/ci_test \
             -v $(pwd)/contracts:/root/contracts \
             finschia/finschianode fnsad start)
+          sleep 5
           echo "container_id=${container_id}" >> "$GITHUB_OUTPUT"\
           echo "$container_id"
-          docker ps -a
       - name: test
         run: docker exec ${{ steps.docker_start.outputs.container_id }} /bin/sh ./ci_test/queue_ci.sh
       - name: fnsad stop
