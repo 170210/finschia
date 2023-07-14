@@ -13,9 +13,10 @@ executeCheck(){
 }
 
 # why it is different in: https://github.com/170210/finschia/actions/runs/5553002582/jobs/10141111508
+# and after xxd it still different
 queryCheck(){
-    local result=$(echo $1 | tr -d '[:space:]')
-    local expected_result=$(echo $2 | tr -d '[:space:]')
+    local result=$(echo "$1" | tr -d '[:space:]')
+    local expected_result=$(echo "$2" | tr -d '[:space:]')
     if [[ "$result" != "$expected_result" ]]; then
         echo -e "$expected_result" | xxd -p
         echo -e "$result" | xxd -p
