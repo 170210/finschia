@@ -177,6 +177,7 @@ jobs:
       - name: start docker node
         id: docker_start
         run: |
+          pwd
           ./init_single.sh docker
           container_id=$(docker run -d \
             -p 26656:26656 -p 26657:26657 \
@@ -184,6 +185,7 @@ jobs:
             -v $(pwd)/ci_test:/root/ci_test \
             -v $(pwd)/contracts:/root/contracts \
             finschia/finschianode fnsad start)
+          echo $container_id
           sleep 1
           echo "container_id=${container_id}" >> "$GITHUB_OUTPUT"\
           docker ps -a
