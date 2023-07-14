@@ -161,7 +161,7 @@ jobs:
             -v ${HOME}/ci_test:/root/ci_test \
             -v ${HOME}/contracts:/root/contracts \
             finschia/finschianode fnsad start)
-          docker exec -T $container_id ls -al
+          docker exec $container_id ls -al
           sleep 1
           docker stop $container_id
       # - name: test
