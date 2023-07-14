@@ -118,6 +118,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build, get-cosmwasm-releases]
     strategy:
+      fail-fast: false
       matrix:
         release-version: ${{ fromJson(needs.get-cosmwasm-releases.outputs.cosmwasm-versions) }}
     steps:
@@ -160,7 +161,7 @@ jobs:
             -v ${HOME}/ci_test:/root/ci_test \
             -v ${HOME}/contracts:/root/contracts \
             finschia/finschianode fnsad start)
-          docker exec -it $container_id ls -al
+          docker exec -T $container_id ls -al
           sleep 1
           docker stop $container_id
       # - name: test
