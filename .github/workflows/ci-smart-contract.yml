@@ -170,23 +170,15 @@ jobs:
         run: |
           docker load --input /tmp/finschia-ci-test.tar
           docker image ls -a
-      # - name: Download build
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: fnsad
-      #     path: ./build
-      # - name: build install
-      #   run: make install
-      # - name: docker build
-      #   run: make docker-build
       # - name: set configure file
       #   run: ./init_single.sh docker
       #   shell: bash
       - name: start docker node
         id: docker_start
         run: |
-          echo ${{ env.GITHUB_WORKSPACE }}
           ./init_single.sh docker
+          ls -al
+          cd /.finschia
           container_id=$(docker run -d \
             -p 26656:26656 -p 26657:26657 \
             -v ${{ env.GITHUB_WORKSPACE }}/.finschia:/root/.finschia \
