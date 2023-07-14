@@ -147,6 +147,7 @@ jobs:
       - name: build install
         run: make install
       - name: docker build
-        run: |
-          make docker-build
-          sh init_single.sh docker
+        run: make docker-build
+      - name: set configure file
+        run: ./init_single.sh docker
+        shell: bash
