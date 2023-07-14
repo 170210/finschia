@@ -63,7 +63,7 @@ jobs:
         run: |
           response=$(curl -s "https://api.github.com/repos/Finschia/cosmwasm/releases")
           versions=$(echo "$response" | jq -r '[.[].tag_name]' | jq -c .)
-          echo "{versions}=$versions" >> $GITHUB_STATE
+          echo "versions=$versions" >> $GITHUB_ENV
 
   tests-smart-contract-on-local-node:
 #  if: env.GIT_DIFF
@@ -71,7 +71,7 @@ jobs:
     needs: [build, get-cosmwasm-releases]
     strategy:
       matrix:
-        release-version: ${{ needs.get-cosmwasm-releases.outputs.cosmwasm-versions }}
+        release-version: ${{ fromJson(needs.get-cosmwasm-releases.outputs.cosmwasm-versions) }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
