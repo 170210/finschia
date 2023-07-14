@@ -158,11 +158,13 @@ jobs:
       - name: start docker node
         id: docker_start
         run: |
+          pwd
+          
           container_id=$(docker run -d \
             -p 26656:26656 -p 26657:26657 \
-            -v ${HOME}/.finschia:/root/.finschia \
-            -v ${HOME}/ci_test:/root/ci_test \
-            -v ${HOME}/contracts:/root/contracts \
+            -v $(pwd)/.finschia:/root/.finschia \
+            -v $(pwd)/ci_test:/root/ci_test \
+            -v $(pwd)/contracts:/root/contracts \
             finschia/finschianode fnsad start)
           docker exec $container_id sh -c 'ls -al && cd ci_test && ls -al && cd ../'
           echo "container_id=${container_id}" >> "$GITHUB_OUTPUT"
