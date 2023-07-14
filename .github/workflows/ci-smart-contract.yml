@@ -186,9 +186,9 @@ jobs:
             -v $(pwd)/contracts:/root/contracts \
             finschia/finschianode fnsad start)
           echo $container_id
-          sleep 5
           echo "container_id=${container_id}" >> "$GITHUB_OUTPUT"\
           docker ps -a
+          sleep 5
         shell: bash
       - name: test
         run: |
