@@ -12,9 +12,10 @@ executeCheck(){
     fi    
 }
 
+# why it is different in: https://github.com/170210/finschia/actions/runs/5553002582/jobs/10141111508
 queryCheck(){
-    local result=$1
-    local expected_result=$2
+    local result=$(echo $1 | tr -d '[:space:]')
+    local expected_result=$(echo $2 | tr -d '[:space:]')
     if [[ "$result" != "$expected_result" ]]; then
         echo -e "expected result is:\n$expected_result"
         echo -e "query result is:\n$result"
