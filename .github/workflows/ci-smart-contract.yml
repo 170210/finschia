@@ -151,3 +151,22 @@ jobs:
       - name: set configure file
         run: ./init_single.sh docker
         shell: bash
+      - name: start docker node
+        id: fnsad_start
+        run: |
+          container_id=$(docker run -i -d -p 26656:26656 -p 26657:26657 \
+            -v ${HOME}/.finschia:/root/.finschia \
+            -v ${HOME}/ci_test:/root/ci_test
+            -v ${HOME}/contracts:/root/contracts
+            finschia/finschianode fnsad start)
+          docker exec -it $container_id ls -al
+          sleep 1
+          docker stop $container_id
+      # - name: test
+      #   run: docker 
+      #   shell: bash
+      # - name: fnsad stop
+      #   if: ${{ always() && steps.fnsad_start.conclusion == 'success' }}
+      #   run: |
+      #     echo $(curl -s localhost:26657/status | jq -r '.result.sync_info.latest_block_height')
+      #     kill $(ps -ef | grep "fnsad start" | grep -v grep | awk '{print $2}')
