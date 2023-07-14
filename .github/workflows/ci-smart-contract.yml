@@ -171,13 +171,12 @@ jobs:
         run: |
           docker load --input /tmp/finschia-ci-test.tar
           docker image ls -a
-      # - name: set configure file
-      #   run: ./init_single.sh docker
-      #   shell: bash
+      - name: set configure file
+        run: ./init_single.sh docker
+        shell: bash
       - name: start docker node
         id: docker_start
         run: |
-          ./init_single.sh docker
           container_id=$(docker run -d \
             -p 26656:26656 -p 26657:26657 \
             -v /home/runner/.finschia:/root/.finschia \
@@ -187,11 +186,10 @@ jobs:
           echo $container_id
           echo "container_id=$container_id" >> "$GITHUB_OUTPUT"
           sleep 5
-        shell: bash
       - name: test
         run: |
           docker exec ${{ steps.docker_start.outputs.container_id }} apk add --no-cache jq
-          docker exec ${{ steps.docker_start.outputs.container_id }} bash ./ci_test/queue_ci.sh
+          docker exec ${{ steps.docker_start.outputs.container_id }} /bin/sh ./ci_test/queue_ci.sh
       - name: fnsad stop
         if: ${{ always() && steps.docker_start.conclusion == 'success' }}
         run: docker stop ${{ steps.docker_start.outputs.container_id }}
