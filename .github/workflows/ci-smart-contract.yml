@@ -137,8 +137,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: debug
-        run: echo ${{ env.GITHUB_WORKSPACE }}
-        run: echo ${{ HOME }}
+        run: |
+          echo ${{ env.GITHUB_WORKSPACE }}
+          echo ${{ HOME }}
   tests-smart-contract-on-docker:
     runs-on: ubuntu-latest
     needs: [build, get-cosmwasm-releases]
