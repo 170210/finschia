@@ -189,7 +189,7 @@ jobs:
       - name: test
         run: |
           docker exec ${{ steps.docker_start.outputs.container_id }} apk add --no-cache jq
-          docker exec ${{ steps.docker_start.outputs.container_id }} /bin/sh ./ci_test/queue_ci.sh
+          docker exec ${{ steps.docker_start.outputs.container_id }} /bin/bash ./ci_test/queue_ci.sh
       - name: fnsad stop
         if: ${{ always() && steps.docker_start.conclusion == 'success' }}
         run: docker stop ${{ steps.docker_start.outputs.container_id }}
