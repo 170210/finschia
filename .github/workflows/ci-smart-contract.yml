@@ -35,7 +35,7 @@ jobs:
     needs: check-diffs
     steps:
       - name: debug
-        run: echo ${{ needs.check-diffs.output.diff }}
+        run: echo ${{ needs.check-diffs.getDiff.diff }}
 
   build:  
     runs-on: ubuntu-latest
