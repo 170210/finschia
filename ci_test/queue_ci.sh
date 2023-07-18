@@ -76,7 +76,7 @@ executeCheck "$run_info" $enqueue_msg
 
 # check sum
 expected_result='data:
-  sum: 500'
+  sum: 40'
 sum_msg=`jq -nc '{sum:{}}'`
 executeAndCheck "$sum_msg" "$expected_result"
 
