@@ -4,8 +4,8 @@ FROM_ACCOUNT='alice'
 TOKEN_NAME='ST1'
 
 executeCheck(){
-    local result="$1"
-    local meg="$2"
+    local result=$1
+    local meg=$2
     if [[ "$result" == *"failed"* ]]; then
         echo -e "$msg\n$result"
         exit 1        
@@ -13,17 +13,31 @@ executeCheck(){
 }
 
 # why it is different in: https://github.com/170210/finschia/actions/runs/5553002582/jobs/10141111508
-# and after xxd it still different
 queryCheck(){
-    local result="$1"
-    local expected_result="$2"
-    # local result=$(echo "$1" | tr -d '[:space:]')
-    # local expected_result=$(echo "$2" | tr -d '[:space:]')
-    if [[ "$result" != "$expected_result" ]]; then
-        echo "$expected_result" | xxd -p
-        echo "$result" | xxd -p
-        exit 1
+    local result=$(echo $1 | tr -d '[:space:]')
+    local expected_result=$(echo $2 | tr -d '[:space:]')
+    if [ ${#result} -ne ${#expected_result} ]; then
+      echo "the len is different"
+      exit 1
     fi
+
+    # 循环逐位比较字符串
+    for (( i=0; i<${#result}; i++ )); do
+      char1="${result:i:1}"
+      char2="${expected_result:i:1}"
+
+      # 检查字符是否相等
+      if [ "$char1" != "$char2" ]; then
+        echo "$((i+1)) is different: $char1 != $char2"
+        exit 1
+      fi
+    done
+
+    # if [[ "$result" != "$expected_result" ]]; then
+    #     echo -e "expected result is:\n$expected_result" | xxd -p
+    #     echo -e "query result is:\n$result" | xxd -p
+    #     exit 1
+    # fi
 }
 
 executeAndCheck() {
