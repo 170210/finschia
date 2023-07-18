@@ -14,8 +14,8 @@ executeCheck(){
 
 # why it is different in: https://github.com/170210/finschia/actions/runs/5553002582/jobs/10141111508
 queryCheck(){
-    local result=$(echo $1 | tr -d '[:space:]')
-    local expected_result=$(echo $2 | tr -d '[:space:]')
+    local result=$1
+    local expected_result=$2
     # echo -e "expected result is:\n$expected_result" | xxd -p
     # if [ ${#result} -ne ${#expected_result} ]; then
     #   echo "the len is different"
@@ -33,8 +33,8 @@ queryCheck(){
     # done
 
     if [[ "$result" != "$expected_result" ]]; then
-        echo -e "expected result is:\n$expected_result" | xxd -p
-        echo -e "query result is:\n$result" | xxd -p
+        echo -e "expected result is:\n$expected_result"
+        echo -e "query result is:\n$result"
         exit 1
     fi
 }
