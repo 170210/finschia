@@ -21,16 +21,15 @@ queryCheck(){
       exit 1
     fi
 
-    # 循环逐位比较字符串
-    for (( i=0; i<${#result}; i++ )); do
+    for (( i=0; i<${#result}; ++i )); do
       char1="${result:i:1}"
       char2="${expected_result:i:1}"
-
-      # 检查字符是否相等
       if [ "$char1" != "$char2" ]; then
         echo "$((i+1)) is different: $char1 != $char2"
         exit 1
       fi
+      echo "$i   $char1"
+
     done
 
     # if [[ "$result" != "$expected_result" ]]; then
