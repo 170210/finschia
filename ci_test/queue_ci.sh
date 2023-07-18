@@ -16,12 +16,13 @@ executeCheck(){
 queryCheck(){
     local result=$(echo $1 | tr -d '[:space:]')
     local expected_result=$(echo $2 | tr -d '[:space:]')
+    echo -e "expected result is:\n$expected_result" | xxd -p
     if [ ${#result} -ne ${#expected_result} ]; then
       echo "the len is different"
       exit 1
     fi
 
-    for (( i=0; i<${#result}; ++i )); do
+    for (( i=0; i<${#result}; i++ )); do
       char1="${result:i:1}"
       char2="${expected_result:i:1}"
       if [ "$char1" != "$char2" ]; then
@@ -29,7 +30,6 @@ queryCheck(){
         exit 1
       fi
       echo "$i   $char1"
-
     done
 
     # if [[ "$result" != "$expected_result" ]]; then
