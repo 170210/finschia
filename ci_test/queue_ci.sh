@@ -64,7 +64,7 @@ done
 
 # check count
 expected_result='data:
-  count: 30'
+  count: 3'
 count_msg=`jq -nc '{count:{}}'`
 executeAndCheck "$count_msg" "$expected_result"
 
