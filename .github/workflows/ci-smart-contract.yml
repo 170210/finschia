@@ -129,7 +129,7 @@ jobs:
         with:
           file: Dockerfile
           context: .
-          tags: finschia/finschianode:ci_test
+          tags: finschia/finschianode:latest
           outputs: type=docker,dest=/tmp/finschia-ci-test.tar
       - name: Upload artifact
         uses: actions/upload-artifact@v3
