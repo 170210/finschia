@@ -127,8 +127,9 @@ jobs:
       - name: Build and export
         uses: docker/build-push-action@v4
         with:
+          file: Dockerfile
           context: .
-          tags: finschia/finschianode:latest
+          tags: finschia/finschianode:ci_test
           outputs: type=docker,dest=/tmp/finschia-ci-test.tar
       - name: Upload artifact
         uses: actions/upload-artifact@v3
