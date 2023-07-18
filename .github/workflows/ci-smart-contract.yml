@@ -29,7 +29,6 @@ jobs:
             go.mod
             go.sum
             .github/workflows/ci-smart-contract.yml
-            ci_test/queue_ci.sh
 
   build:
     needs: check-diffs
