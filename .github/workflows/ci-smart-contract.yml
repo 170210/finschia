@@ -32,12 +32,6 @@ jobs:
             go.sum
             .github/workflows/ci-smart-contract.yml
             ci_test/queue_ci.sh
-  debug:
-    runs-on: ubuntu-latest
-    needs: check-diffs
-    steps:
-      - name: debug
-        run: echo ${{ needs.check-diffs.outputs.get_diff }}
   build:  
     runs-on: ubuntu-latest
     needs: check-diffs
