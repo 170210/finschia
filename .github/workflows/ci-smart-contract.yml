@@ -16,25 +16,25 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
     if: "!startsWith(github.ref, 'refs/tags/') && github.ref != 'refs/heads/main'"
 
-  # check-diffs:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - name: Get diff
-  #       id: getDiff
-  #       uses: technote-space/get-diff-action@v6.1.2
-  #       with:
-  #         PATTERNS: |
-  #           **/**.go
-  #           go.mod
-  #           go.sum
-  #           .github/workflows/ci-smart-contract.yml
-  #           ci_test/queue_ci.sh
+  check-diffs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get diff
+        id: getDiff
+        uses: technote-space/get-diff-action@v6.1.2
+        with:
+          PATTERNS: |
+            **/**.go
+            go.mod
+            go.sum
+            .github/workflows/ci-smart-contract.yml
+            ci_test/queue_ci.sh
 
   build:  
     runs-on: ubuntu-latest
-    # needs: check-diffs
-    # if: ${{ needs.check-diffs.output.diff }}
+    needs: check-diffs
+    if: ${{ needs.check-diffs.output.diff }}
     strategy:
       matrix:
         go-arch: ["amd64"]
@@ -66,7 +66,6 @@ jobs:
           versions=$(echo "$response" | jq -r '[.[].tag_name]' | jq -c .)
           echo "versions=${versions}" >> "$GITHUB_OUTPUT"
   tests-smart-contract-on-local-node:
-#  if: env.GIT_DIFF
     runs-on: ubuntu-latest
     needs: [build, get-cosmwasm-releases]
     strategy:
@@ -119,8 +118,8 @@ jobs:
 
   build-finschia-docker:
     runs-on: ubuntu-latest
-    # needs: check-diffs
-    # if: ${{ needs.check-diffs.output.diff }}
+    needs: check-diffs
+    if: ${{ needs.check-diffs.output.diff }}
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v2
@@ -136,14 +135,6 @@ jobs:
         with:
           name: finschia-ci-test
           path: /tmp/finschia-ci-test.tar
-  # debug:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: debug
-  #       run: |
-  #         ./init_single.sh docker
-  #         ls /home/runner
-
   tests-smart-contract-on-docker:
     runs-on: ubuntu-latest
     needs: [build-finschia-docker, get-cosmwasm-releases]
@@ -154,9 +145,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v2
-      # - uses: actions/setup-go@v4
-      #   with:
-      #     go-version: 1.18
       - name: Download smart contracts
         uses: dsaltares/fetch-gh-release-asset@master
         with:
