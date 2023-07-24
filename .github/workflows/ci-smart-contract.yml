@@ -154,7 +154,7 @@ jobs:
           docker image ls -a
       - name: Set configure file
         run: |
-          export FNSAD="docker run -i --rm -p 26656:26656 -p 26657:26657 -v /home/runner/.finschia:/root/.finschia finschianode:test fnsad"
+          export FNSAD="docker run -i --rm -p 26656:26656 -p 26657:26657 -v ${pwd}/.finschia:/root/.finschia finschianode:test fnsad"
           ./init_single.sh
         shell: bash
       # sleep 5 seconds to wait for finschia to start up
@@ -163,7 +163,7 @@ jobs:
         run: |
           container_id=$(docker run -d \
             -p 26656:26656 -p 26657:26657 \
-            -v /home/runner/.finschia:/root/.finschia \
+            -v ${pwd}/.finschia:/root/.finschia \
             -v $(pwd)/ci_test:/root/ci_test \
             -v $(pwd)/contracts:/root/contracts \
             finschianode:test fnsad start)
