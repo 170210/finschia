@@ -166,7 +166,7 @@ jobs:
       - name: set configure file
         run: |
           FNSAD="docker run -i --rm -p 26656:26656 -p 26657:26657 -v $CONFIG_DIR:/root/.finschia --platform=linux/amd64 finschianode:ci fnsad"
-          ./init_single.sh docker
+          ./init_single.sh
         shell: bash
       - name: start docker node
         id: docker_start
