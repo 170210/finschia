@@ -165,8 +165,9 @@ jobs:
           docker image ls -a
       - name: set configure file
         run: |
-          export FNSAD="docker run -i --rm -p 26656:26656 -p 26657:26657 -v $CONFIG_DIR:/root/.finschia --platform=linux/amd64 finschiatest fnsad"
+          export FNSAD="docker run -i --rm -p 26656:26656 -p 26657:26657 -v $CONFIG_DIR:/root/.finschia --platform=linux/amd64 finschia/finschianode fnsad"
           ./init_single.sh
+          docker container prune        
         shell: bash
       - name: docker node
         id: docker_start
