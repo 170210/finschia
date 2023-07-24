@@ -129,7 +129,7 @@ jobs:
         with:
           file: Dockerfile
           context: .
-          tags: finschianode:ci
+          tags: finschiatest
           outputs: type=docker,dest=/tmp/finschia-ci-test.tar
       - name: Upload artifact
         uses: actions/upload-artifact@v3
@@ -165,7 +165,7 @@ jobs:
           docker image ls -a
       - name: set configure file
         run: |
-          export FNSAD="docker run -i --rm -p 26656:26656 -p 26657:26657 -v $CONFIG_DIR:/root/.finschia --platform=linux/amd64 finschianode fnsad"
+          export FNSAD="docker run -i --rm -p 26656:26656 -p 26657:26657 -v $CONFIG_DIR:/root/.finschia --platform=linux/amd64 finschiatest fnsad"
           ./init_single.sh
         shell: bash
       - name: docker node
@@ -176,7 +176,7 @@ jobs:
             -v /home/runner/.finschia:/root/.finschia \
             -v $(pwd)/ci_test:/root/ci_test \
             -v $(pwd)/contracts:/root/contracts \
-            finschianode:ci fnsad start)
+            finschiatest fnsad start)
           echo $container_id
           echo "container_id=$container_id" >> "$GITHUB_OUTPUT"
           sleep 5
