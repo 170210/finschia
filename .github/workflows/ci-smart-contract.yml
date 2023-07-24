@@ -1,11 +1,7 @@
 name: Smart Contract CI
 #  Smart Contract CI workflow runs CI test for checking if smart contract works well
 #  This workflow is run on pushes to main & every Pull Requests where a .go, .mod, .sum, ci_test/**.sh, and this file have been changed
-on:
-  pull_request:
-  push:
-    branches:
-      - main
+on: push
 
 jobs:
   cleanup-runs:
