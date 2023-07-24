@@ -129,7 +129,7 @@ jobs:
         with:
           file: Dockerfile
           context: .
-          tags: finschia/finschianode:latest
+          tags: finschianode:ci
           outputs: type=docker,dest=/tmp/finschia-ci-test.tar
       - name: Upload artifact
         uses: actions/upload-artifact@v3
@@ -142,7 +142,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        release-version: ${{ fromJson(needs.get-cosmwasm-releases.outputs.cosmwasm-versions) }}
+        release-version:  ${{ fromJson(needs.get-cosmwasm-releases.outputs.cosmwasm-versions) }}
     steps:
       - uses: actions/checkout@v3
       - uses: docker/setup-buildx-action@v2
@@ -164,7 +164,9 @@ jobs:
           docker load --input /tmp/finschia-ci-test.tar
           docker image ls -a
       - name: set configure file
-        run: ./init_single.sh docker
+        run: |
+          FNSAD="docker run -i --rm -p 26656:26656 -p 26657:26657 -v $CONFIG_DIR:/root/.finschia --platform=linux/amd64 finschianode:ci fnsad"
+          ./init_single.sh docker
         shell: bash
       - name: start docker node
         id: docker_start
@@ -174,7 +176,7 @@ jobs:
             -v /home/runner/.finschia:/root/.finschia \
             -v $(pwd)/ci_test:/root/ci_test \
             -v $(pwd)/contracts:/root/contracts \
-            finschia/finschianode fnsad start)
+            finschianode:ci fnsad start)
           echo $container_id
           echo "container_id=$container_id" >> "$GITHUB_OUTPUT"
           sleep 5
