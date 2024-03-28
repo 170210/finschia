@@ -24,16 +24,6 @@ func CreateUpgradeHandler(
 			return vm, err
 		}
 
-		// vm["auth"] = 1
-		// vm["bank"] = 1
-		// vm["collection"] = 2
-		// vm["distribution"] = 1
-		// vm["foundation"] = 2
-		// vm["gov"] = 1
-		// vm["slashing"] = 1
-		// vm["staking"] = 1
-		// vm["token"] = 1
-
 		// logger.Info("Upgrade complete")
 		return vm, err
 	}
